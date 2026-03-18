@@ -3,294 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOCA MASTER PREMIUM</title>
+    <title>VOCA MASTER - PDF Download Edition</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <style>
         :root {
-            --bg-dark: #0F172A;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --primary-grad: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
-            --accent: #F472B6;
-            --text-main: #F8FAFC;
-            --text-dim: #94A3B8;
+            --bg: #0F172A;
+            --card: rgba(30, 41, 59, 0.9);
+            --point: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
+            --text: #F8FAFC;
+            --dim: #94A3B8;
         }
-
-        * { 
-            -webkit-tap-highlight-color: transparent; 
-            box-sizing: border-box; 
-            font-family: 'Pretendard', -apple-system, sans-serif;
-            margin: 0; padding: 0;
-        }
-
-        body { 
-            background-color: var(--bg-dark);
-            background-image: radial-gradient(circle at top right, #1E1B4B, transparent),
-                              radial-gradient(circle at bottom left, #1E1B4B, transparent);
-            color: var(--text-main);
-            min-height: 100dvh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow-x: hidden;
-        }
-
-        .container { 
-            width: 100%;
-            max-width: 500px;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* 메인 카드 스타일 */
-        .card-container { perspective: 1000px; width: 100%; height: 380px; }
-        .card { 
-            position: relative; width: 100%; height: 100%; 
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); 
-            transform-style: preserve-3d; cursor: pointer; 
-        }
-        .card.is-flipped { transform: rotateY(180deg); }
-        
-        .card-face { 
-            position: absolute; width: 100%; height: 100%; 
-            backface-visibility: hidden; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            padding: 30px; border-radius: 32px; 
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-        
-        .card-back { 
-            transform: rotateY(180deg); 
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
-            border: 1px solid rgba(168, 85, 247, 0.4);
-        }
-
-        .word-text { font-size: 3rem; font-weight: 800; letter-spacing: -0.02em; text-align: center; }
-        .mean-text { font-size: 1.8rem; background: var(--primary-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700; text-align: center; }
-
-        /* 입력창 & 버튼 */
-        input.modern-input {
-            width: 100%; padding: 20px; border-radius: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            color: white; font-size: 1.2rem; text-align: center;
-            outline: none; transition: 0.3s;
-        }
-        input.modern-input:focus { border-color: #A855F7; background: rgba(255, 255, 255, 0.1); }
-
-        .btn { 
-            width: 100%; padding: 20px; border-radius: 20px; border: none; 
-            font-size: 1.1rem; font-weight: 700; cursor: pointer; 
-            transition: transform 0.2s, opacity 0.2s;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .btn:active { transform: scale(0.98); }
-        .btn-primary { background: var(--primary-grad); color: white; }
-        .btn-outline { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-main); }
-
-        .part-selector {
-            background: rgba(255, 255, 255, 0.03); padding: 24px; border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 20px;
-        }
-
-        .progress-bar-container { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--primary-grad); width: 0%; transition: 0.4s ease-out; }
-
-        .screen { display: none; width: 100%; animation: fadeIn 0.4s ease-out; }
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); min-height: 100dvh; display: flex; justify-content: center; align-items: center; background-image: radial-gradient(circle at top right, #1E1B4B, transparent); overflow-x: hidden; }
+        .container { width: 100%; max-width: 480px; padding: 20px; }
+        .screen { display: none; animation: fadeIn 0.3s ease-out; }
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 카드 디자인 */
+        .card-container { perspective: 1000px; width: 100%; height: 320px; margin: 20px 0; }
+        .card { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; cursor: pointer; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; border-radius: 32px; background: var(--card); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 20px 40px rgba(0,0,0,0.4); text-align: center; }
+        .card-back { transform: rotateY(180deg); border: 1px solid rgba(168, 85, 247, 0.5); background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(168, 85, 247, 0.12)); }
+        
+        .word { font-size: 2.8rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 12px; }
+        .mean { font-size: 1.7rem; font-weight: 700; color: #A855F7; line-height: 1.4; }
+
+        /* 버튼 및 입력 UI */
+        .btn { width: 100%; padding: 18px; border-radius: 20px; border: none; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 12px; }
+        .btn-primary { background: var(--point); color: white; box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3); }
+        .btn-outline { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; }
+        .btn-pdf { background: #10B981; color: white; margin-bottom: 10px; font-size: 0.9rem; padding: 12px; }
+        .input-ui { width: 100%; padding: 18px; border-radius: 18px; background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.1); color: white; text-align: center; font-size: 1.25rem; outline: none; }
+        
+        .progress-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin: 15px 0; }
+        .progress-fill { height: 100%; background: var(--point); width: 0%; transition: 0.5s; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="home-screen" class="screen active">
-        <div style="text-align:center;">
-            <h1 style="font-size:2.2rem; font-weight:900; margin-bottom:8px; background: var(--primary-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">VOCA MASTER</h1>
-            <p style="color:var(--text-dim); font-size:1rem; margin-bottom:30px;">EBS 수능특강 Week 3 (전체 13파트 / 126단어)</p>
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="font-size: 2.3rem; background: var(--point); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900;">VOCA MASTER</h1>
+            <p style="color: var(--dim); margin-top: 8px;">PDF 다운로드 & 학습 시스템</p>
+        </div>
+        
+        <div style="background: rgba(255,255,255,0.03); padding: 25px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.06); margin-bottom: 20px;">
+            <p style="text-align: center; font-size: 0.95rem; color: var(--dim); margin-bottom: 15px;">학습 범위 설정 (Part 1 ~ 13)</p>
+            <input type="number" id="target-part" value="5" min="1" max="13" class="input-ui" style="margin-bottom: 15px;">
             
-            <div class="part-selector">
-                <p style="font-size: 0.9rem; margin-bottom: 15px; color: var(--text-main);">🧠 학습 범위 설정 (최대 13파트)</p>
-                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px;">
-                    <span style="color: var(--text-dim);">Part 1 부터</span>
-                    <input type="number" id="target-part" value="5" min="1" max="13" class="modern-input" style="width: 80px; padding: 10px;">
-                    <span style="color: var(--text-dim);">까지</span>
-                </div>
-                <button class="btn btn-primary" onclick="startStrategy()">선택 파트 학습 시작</button>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                <button class="btn btn-outline" onclick="initMode('study')">전체 암기</button>
-                <button class="btn btn-outline" onclick="initMode('test')">자가 테스트</button>
-            </div>
-            <button class="btn btn-outline" style="margin-top: 12px; width: 100%;" onclick="generatePDF()">📄 시험지 PDF 생성</button>
+            <button class="btn btn-pdf" onclick="downloadPDF()">📄 설정 범위 단어장 PDF 다운로드</button>
+            
+            <button class="btn btn-primary" onclick="startStrategy()">전략적 누적 학습 시작</button>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <button class="btn btn-outline" onclick="initMode('study')">전체 암기</button>
+            <button class="btn btn-outline" onclick="initMode('test')">랜덤 테스트</button>
         </div>
     </div>
 
     <div id="action-screen" class="screen">
-        <div style="margin-bottom: 20px;">
-            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 8px;">
-                <span id="mode-title">학습 중</span>
-                <span><span id="cur-num">1</span> / <span id="total-num">126</span></span>
-            </div>
-            <div class="progress-bar-container"><div id="progress-fill" class="progress-fill"></div></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span id="mode-label" style="font-size: 0.9rem; color: #A855F7; font-weight: 800;">학습 중</span>
+            <span style="font-size: 0.9rem; color: var(--dim);"><span id="cur-idx">1</span> / <span id="total-idx">126</span></span>
         </div>
+        <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
 
-        <div id="card-area" class="card-container" onclick="flip()">
+        <div id="card-area" class="card-container" onclick="flipCard()">
             <div id="main-card" class="card">
-                <div class="card-face"><div id="front-w" class="word-text">word</div></div>
-                <div class="card-face card-back"><div id="back-m" class="mean-text">meaning</div></div>
+                <div class="card-face"><div id="front-w" class="word"></div></div>
+                <div class="card-face card-back"><div id="back-m" class="mean"></div></div>
             </div>
         </div>
 
-        <div id="test-area" style="display:none; text-align:center;">
-            <div id="test-w" class="word-text" style="margin: 60px 0;">word</div>
-            <input type="text" id="user-input" class="modern-input" placeholder="뜻을 입력하세요" autocomplete="off">
-            <div id="test-ans" class="mean-text" style="margin-top:30px; opacity:0; transition: 0.3s;">answer</div>
+        <div id="test-area" style="display: none; text-align: center; margin: 30px 0;">
+            <div id="test-w" class="word" style="margin-bottom: 25px;"></div>
+            <input type="text" id="user-input" class="input-ui" placeholder="정답 입력" autocomplete="off" onkeypress="if(event.key==='Enter') handleNext()">
+            <div id="test-ans" class="mean" style="margin-top: 25px; opacity: 0;"></div>
         </div>
 
-        <div id="study-btns" style="display:none; grid-template-columns:1fr 1fr; gap:12px; margin-top: 20px;">
-            <button class="btn" style="background: rgba(239, 68, 68, 0.1); color: #F87171; border: 1px solid rgba(239, 68, 68, 0.2);" onclick="next()">모름 ❌</button>
-            <button class="btn" style="background: rgba(16, 185, 129, 0.1); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.2);" onclick="next()">알겠음 ✅</button>
+        <div id="study-controls" style="display: none; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <button class="btn" style="background: rgba(239, 68, 68, 0.15); color: #F87171;" onclick="nextWord()">모름 ❌</button>
+            <button class="btn" style="background: rgba(16, 185, 129, 0.15); color: #34D399;" onclick="nextWord()">알겠음 ✅</button>
         </div>
         
-        <button id="next-btn" class="btn btn-primary" onclick="handleAction()" style="margin-top:20px;">뜻 확인</button>
-        <button class="btn" style="background:none; color:var(--text-dim); font-size:0.9rem; margin-top: 10px;" onclick="location.reload()">학습 중단 및 홈으로</button>
+        <button id="action-btn" class="btn btn-primary" onclick="handleNext()">뜻 확인하기</button>
+        <button class="btn" style="background: none; color: var(--dim);" onclick="location.reload()">홈으로</button>
     </div>
 </div>
 
 <script>
-    [span_2](start_span)// 영어.pdf 기반 126개 단어 전수 데이터[span_2](end_span)
     const vocab = [
-        {w:"abstract",m:"추상적인 요약(하다)"},{w:"accelerate",m:"가속하다. 높이다. 증가"},{w:"accomplish",m:"달성하다. 성취하다"},{w:"accuracy",m:"정확(성)"},{w:"acknowledge",m:"인정하다. 승인하다. 확인하다"},{w:"acquisition",m:"습득, 획득 취득"},{w:"adequate",m:"적당한, 충분한"},{w:"administrative",m:"행정의 관리의 사무의"},{w:"advocate",m:"옹호하다. 지지하다. 변호사, 지지자"},{w:"appropriate",m:"적절한, 적합한, 적당한"},
-        {w:"approval",m:"승민, 찬성, 허가, 인정"},{w:"arrangement",m:"배열: 협정, 합의, 계약"},{w:"assimilate",m:"동화하다. 흡수하다. 소화하다"},{w:"attainment",m:"달성, 도달"},{w:"authoritative",m:"권위있는, 권위적인"},{w:"backfire",m:"역효과를 낳다. 역화"},{w:"classification",m:"분류, 유형, 범주"},{w:"cognitive",m:"인지적인, 인식의, 인지의"},{w:"commit",m:"저지르다. 전념하다. 헌신하다"},{w:"compensate",m:"보상하다. 보완하다"},
-        {w:"comprehension",m:"이해"},{w:"conclusion",m:"결론"},{w:"conduct",m:"행동 행위, 실시하다. 지휘하다"},{w:"consciousness",m:"의식, 인식"},{w:"consistent",m:"일관된, 지속적인, 일치하는"},{w:"constant",m:"끊임없는, 지속적인, 일정한"},{w:"constrain",m:"구속하다. 속박하다. 제한하다"},{w:"coordination",m:"조화, 합동, 조정"},{w:"core",m:"중심부, 핵심적인"},{w:"counterpart",m:"상대(방), 대용하는 사람/사물"},
-        {w:"coverage",m:"지역, 범위: 방송, 보도"},{w:"definition",m:"정의, 개념, 의미"},{w:"denial",m:"부정, 거부, 부인"},{w:"dense",m:"밀집한, 질은 밀도가 높은"},{w:"depict",m:"묘사하다. 그리다. 보여주다"},{w:"descendent",m:"후손, 후대(의)"},{w:"desperate",m:"필사적인, 절망적인, 절실한"},{w:"dialect",m:"방언, 지방 언어, 사투리"},{w:"discern",m:"식별하다. 분간하다. 알아차리다"},{w:"discipline",m:"학문, 분야 규율, 훈련, 훈육"},
-        {w:"distinct",m:"뚜렷한, 독특한, 다른"},{w:"distribution",m:"분포, 분배 유통, 배포"},{w:"duplicate",m:"오방하다. 복사하다. 복제한"},{w:"effectiveness",m:"효능감, 실효성, 효율성"},{w:"efficiency",m:"효율, 능률, 효과"},{w:"elaborate",m:"정교한, 복잡한, 상세히 설명하다"},{w:"emerging",m:"떠오르는, 나타나는 신흥의"},{w:"emphasis",m:"강조, 중점"},{w:"engagement",m:"참여, 개입: 약속, 약혼"},{w:"excessive",m:"지나진, 과도한"},
-        {w:"exclude",m:"제외하다 배제하다. 배척하다"},{w:"exclusive",m:"독점적인, 전용의 배타적인"},{w:"execution",m:"실행, 집행 저형"},{w:"expansion",m:"확장, 평장, 확대"},{w:"expertise",m:"전문적 기술, 전문지식, 전문성"},{w:"extend",m:"확장하다. (지)다. 눌리다"},{w:"extension",m:"확장, 연장, 확대"},{w:"extensive",m:"광범위한, 넓은, 대규모의"},{w:"external",m:"외부의"},{w:"extract",m:"끌어낸다. 추출(하다)"},
-        {w:"facilitation",m:"촉진 간편화"},{w:"fascinate",m:"매혹하다. 사로잡다"},{w:"flexibility",m:"유연성, 융통성"},{w:"formative",m:"형성하는, 형성의, 발달의"},{w:"fundamental",m:"근본적인, 기본적인"},{w:"generate",m:"생성하다. 만들어내다"},{w:"hinder",m:"방해하다 저해하다"},{w:"horizontal",m:"수평의, 기로의"},{w:"identify",m:"확인하다. 식별하다. 알아보다"},{w:"impulsive",m:"충동적인"},
-        {w:"incorporate",m:"포함하다. 결합하다. 법인의"},{w:"indefinitely",m:"무한히, 무한정으로, 계속"},{w:"independence",m:"독립(성), 자립"},{w:"indicate",m:"나타내다. 가리키다. 표시하다"},{w:"induce",m:"유도하다. 유발하다"},{w:"inhabit",m:"거주하다. 서식하다"},{w:"initial",m:"초기의 처음의"},{w:"instantaneous",m:"즉각적인 순간적인"},{w:"institution",m:"기관, 협회, 학회"},{w:"insufficient",m:"불충분한, 부족한"},
-        {w:"intensity",m:"강렬함, 강도, 집중"},{w:"interpret",m:"해석하다. 이해하다"},{w:"intervention",m:"간성, 개입 접근, 조치"},{w:"invasion",m:"침공, 침해, 침략"},{w:"investment",m:"투자, 투입"},{w:"irrational",m:"비합리적인, 비이성적인"},{w:"legislation",m:"입법, 법안, 법제, 법률"},{w:"legitimate",m:"정당한 합법적인 정통의"},{w:"logically",m:"논리적인, 타당한"},{w:"manufacturer",m:"제조업자, (제조)업제, 생산자"},
-        {w:"maturity",m:"성숙(도) 원숙함, 만기"},{w:"minority",m:"소수(집단) 미성년"},{w:"neural",m:"신경의"},{w:"notion",m:"생각, 개념, 관념"},{w:"permanent",m:"영구적인"},{w:"persist",m:"지속되다. 고집하다"},{w:"portion",m:"(1)인분 부분, 일 분배하다"},{w:"previously",m:"이전에, 과거에 지금까지"},{w:"primate",m:"영장류"},{w:"procedure",m:"절차, 과정, 방법"},
-        {w:"proficient",m:"능숙한, 숙달한 익숙한"},{w:"property",m:"특성, 속성 재산"},{w:"pursuit",m:"추구, 추격"},{w:"quantity",m:"양, 수량, 대량"},{w:"reasonable",m:"타당한, 합리적인, 이성적인"},{w:"reference",m:"언급(대상), 참고, 참조 기준, 표준"},{w:"regulate",m:"규제하다. 조절하다. 조정하다"},{w:"reproduction",m:"번식, 복제, 재생산, 재현"},{w:"reputation",m:"평판, 명성, 명예"},{w:"resolve",m:"해결하다. 결의하다"},
-        {w:"retailer",m:"소매상(인) 소매업체"},{w:"scatter",m:"들어지다. 뿌리다. 분산시키다"},{w:"secure",m:"확브하다. 보장하다. 안전한"},{w:"sophisticated",m:"정교한 복잡한, 세련된"},{w:"spatial",m:"공간의, 장소의, 공간적인"},{w:"sphere",m:"영역, 분야, 범위 구, 전체"},{w:"spontaneous",m:"자발적인, 자연스러운"},{w:"substantial",m:"상담한, 실질적인 중대한"},{w:"sufficient",m:"충분한 만족스러운"},{w:"timely",m:"시기적절하게 적시의"},
-        {w:"translation",m:"번역, 해석, 통역"},{w:"urgent",m:"긴급한, 급박한"},{w:"variant",m:"변형, 변종"},{w:"verbal",m:"말의 언어의"},{w:"withdraw",m:"빼내다. 취소하다. 철수하다. 연출하다"},{w:"yield",m:"산출하다. 생산하다 하다. 수학/산출량"}
+        {w:"abstract",m:"추상적인, 요약(하다)"},{w:"accelerate",m:"가속하다, 높이다, 증가"},{w:"accomplish",m:"달성하다, 성취하다"},{w:"accuracy",m:"정확(성)"},{w:"acknowledge",m:"인정하다, 승인하다, 확인하다"},{w:"acquisition",m:"습득, 획득, 취득"},{w:"adequate",m:"적당한, 충분한"},{w:"administrative",m:"행정의, 관리의, 사무의"},{w:"advocate",m:"옹호하다, 지지하다, 변호사, 지지자"},{w:"appropriate",m:"적절한, 적합한, 적당한"},
+        {w:"approval",m:"승인, 찬성, 허가, 인정"},{w:"arrangement",m:"배열, 협정, 합의, 계약"},{w:"assimilate",m:"동화하다, 흡수하다, 소화하다"},{w:"attainment",m:"달성, 도달"},{w:"authoritative",m:"권위있는, 권위적인"},{w:"backfire",m:"역효과를 낳다, 역화"},{w:"classification",m:"분류, 유형, 범주"},{w:"cognitive",m:"인지적인, 인식의, 인지의"},{w:"commit",m:"저지르다, 전념하다, 헌신하다"},{w:"compensate",m:"보상하다, 보완하다"},
+        {w:"comprehension",m:"이해"},{w:"conclusion",m:"결론"},{w:"conduct",m:"행동, 행위, 실시하다, 지휘하다"},{w:"consciousness",m:"의식, 인식"},{w:"consistent",m:"일관된, 지속적인, 일치하는"},{w:"constant",m:"끊임없는, 지속적인, 일정한"},{w:"constrain",m:"구속하다, 속박하다, 제한하다"},{w:"coordination",m:"조화, 합동, 조정"},{w:"core",m:"중심부, 핵심적인"},{w:"counterpart",m:"상대(방), 대응하는 사람/사물"},
+        {w:"coverage",m:"지역, 범위, 방송, 보도"},{w:"definition",m:"정의, 개념, 의미"},{w:"denial",m:"부정, 거부, 부인"},{w:"dense",m:"밀집한, 짙은, 밀도가 높은"},{w:"depict",m:"묘사하다, 그리다, 보여주다"},{w:"descendent",m:"후손, 후대(의)"},{w:"desperate",m:"필사적인, 절망적인, 절실한"},{w:"dialect",m:"방언, 지방 언어, 사투리"},{w:"discern",m:"식별하다, 분간하다, 알아차리다"},{w:"discipline",m:"학문, 분야, 규율, 훈련, 훈육"},
+        {w:"distinct",m:"뚜렷한, 독특한, 다른"},{w:"distribution",m:"분포, 분배, 유통, 배포"},{w:"duplicate",m:"모방하다, 복사하다, 복제한"},{w:"effectiveness",m:"효능감, 실효성, 효율성"},{w:"efficiency",m:"효율, 능률, 효과"},{w:"elaborate",m:"정교한, 복잡한, 상세히 설명하다"},{w:"emerging",m:"떠오르는, 나타나는, 신흥의"},{w:"emphasis",m:"강조, 중점"},{w:"engagement",m:"참여, 개입, 약속, 약혼"},{w:"excessive",m:"지나친, 과도한"},
+        {w:"exclude",m:"제외하다, 배제하다, 배척하다"},{w:"exclusive",m:"독점적인, 전용의, 배타적인"},{w:"execution",m:"실행, 집행, 처형"},{w:"expansion",m:"확장, 팽창, 확대"},{w:"expertise",m:"전문적 기술, 전문지식, 전문성"},{w:"extend",m:"확장하다, 뻗다, 늘리다"},{w:"extension",m:"확장, 연장, 확대"},{w:"extensive",m:"광범위한, 넓은, 대규모의"},{w:"external",m:"외부의"},{w:"extract",m:"끌어낸다, 추출(하다)"},
+        {w:"facilitation",m:"촉진, 간편화"},{w:"fascinate",m:"매혹하다, 사로잡다"},{w:"flexibility",m:"유연성, 융통성"},{w:"formative",m:"형성하는, 형성의, 발달의"},{w:"fundamental",m:"근본적인, 기본적인"},{w:"generate",m:"생성하다, 만들어내다"},{w:"hinder",m:"방해하다, 저해하다"},{w:"horizontal",m:"수평의, 가로의"},{w:"identify",m:"확인하다, 식별하다, 알아보다"},{w:"impulsive",m:"충동적인"},
+        {w:"incorporate",m:"포함하다, 결합하다, 법인의"},{w:"indefinitely",m:"무한히, 무한정으로, 계속"},{w:"independence",m:"독립(성), 자립"},{w:"indicate",m:"나타내다, 가리키다, 표시하다"},{w:"induce",m:"유도하다, 유발하다"},{w:"inhabit",m:"거주하다, 서식하다"},{w:"initial",m:"초기의, 처음의"},{w:"instantaneous",m:"즉각적인, 순간적인"},{w:"institution",m:"기관, 협회, 학회"},{w:"insufficient",m:"불충분한, 부족한"},
+        {w:"intensity",m:"강렬함, 강도, 집중"},{w:"interpret",m:"해석하다, 이해하다"},{w:"intervention",m:"간섭, 개입, 접근, 조치"},{w:"invasion",m:"침공, 침해, 침략"},{w:"investment",m:"투자, 투입"},{w:"irrational",m:"비합리적인, 비이성적인"},{w:"legislation",m:"입법, 법안, 법제, 법률"},{w:"legitimate",m:"정당한, 합법적인, 정통의"},{w:"logically",m:"논리적인, 타당한"},{w:"manufacturer",m:"제조업자, 제조업체, 생산자"},
+        {w:"maturity",m:"성숙(도), 원숙함, 만기"},{w:"minority",m:"소수(집단), 미성년"},{w:"neural",m:"신경의"},{w:"notion",m:"생각, 개념, 관념"},{w:"permanent",m:"영구적인"},{w:"persist",m:"지속되다, 고집하다"},{w:"portion",m:"인분, 부분, 몫, 분배하다"},{w:"previously",m:"이전에, 과거에, 지금까지"},{w:"primate",m:"영장류"},{w:"procedure",m:"절차, 과정, 방법"},
+        {w:"proficient",m:"능숙한, 숙달한, 익숙한"},{w:"property",m:"특성, 속성, 재산"},{w:"pursuit",m:"추구, 추격"},{w:"quantity",m:"양, 수량, 대량"},{w:"reasonable",m:"타당한, 합리적인, 이성적인"},{w:"reference",m:"언급(대상), 참고, 참조 기준, 표준"},{w:"regulate",m:"규제하다, 조절하다, 조정하다"},{w:"reproduction",m:"번식, 복제, 재생산, 재현"},{w:"reputation",m:"평판, 명성, 명예"},{w:"resolve",m:"해결하다, 결의하다"},
+        {w:"retailer",m:"소매상(인), 소매업체"},{w:"scatter",m:"흩어지다, 뿌리다, 분산시키다"},{w:"secure",m:"확보하다, 보장하다, 안전한"},{w:"sophisticated",m:"정교한, 복잡한, 세련된"},{w:"spatial",m:"공간의, 장소의, 공간적인"},{w:"sphere",m:"영역, 분야, 범위, 구, 천체"},{w:"spontaneous",m:"자발적인, 자연스러운"},{w:"substantial",m:"상당한, 실질적인, 중대한"},{w:"sufficient",m:"충분한, 만족스러운"},{w:"timely",m:"시기적절하게, 적시의"},
+        {w:"translation",m:"번역, 해석, 통역"},{w:"urgent",m:"긴급한, 급박한"},{w:"variant",m:"변형, 변종"},{w:"verbal",m:"말의, 언어의"},{w:"withdraw",m:"빼내다, 취소하다, 철수하다, 인출하다"},{w:"yield",m:"산출하다, 생산하다, 굴복하다, 수확/산출량"}
     ];
 
-    let current = [], idx = 0, mode = '', isFlipped = false, isReviewing = false;
-    let strategyPart = 1, maxPart = 13;
+    let currentList = [], currentIndex = 0, currentMode = '', isFlipped = false, isRevealed = false, currentStep = 1, maxStep = 1;
 
-    function startStrategy() {
-        const inputVal = parseInt(document.getElementById('target-part').value);
-        if (inputVal > 13) { alert("⚠️ 초과됐습니다! 이 단어장은 총 13파트까지만 있습니다."); return; }
-        if (inputVal < 1) { alert("⚠️ 1 이상의 숫자를 입력해주세요."); return; }
+    // PDF 다운로드 기능
+    async function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const part = document.getElementById('target-part').value;
+        const dataForPDF = vocab.slice(0, part * 10);
         
-        maxPart = inputVal;
-        mode = 'strategy'; strategyPart = 1;
-        generateStrategyData();
-        showScreen('action');
-        document.getElementById('mode-title').innerText = '누적 전략 학습';
-        update();
-    }
-
-    function generateStrategyData() {
-        let endIdx = strategyPart * 10;
-        if (endIdx > vocab.length) endIdx = vocab.length;
-        current = vocab.slice(0, endIdx);
-        idx = 0;
-        document.getElementById('total-num').innerText = current.length;
-    }
-
-    function initMode(m) {
-        mode = m; current = [...vocab].sort(() => Math.random() - 0.5); idx = 0;
-        showScreen('action');
-        document.getElementById('mode-title').innerText = mode === 'study' ? '전체 학습' : '테스트';
-        document.getElementById('total-num').innerText = current.length;
+        doc.text(`VOCA MASTER - Week 3 (Part 1~${part})`, 14, 15);
         
-        if(mode === 'test') {
-            document.getElementById('card-area').style.display = 'none';
-            document.getElementById('test-area').style.display = 'block';
-        } else {
-            document.getElementById('card-area').style.display = 'block';
-            document.getElementById('test-area').style.display = 'none';
-        }
-        update();
-    }
-
-    function update() {
-        if(idx >= current.length) {
-            if(mode === 'strategy' && strategyPart < maxPart) {
-                alert(`🎊 Part ${strategyPart} 완료! 다음 누적 단계(Part 1~${strategyPart + 1})로 이동합니다.`);
-                strategyPart++; generateStrategyData(); update(); return;
-            }
-            alert("👏 목표 학습을 모두 마쳤습니다!"); location.reload(); return;
-        }
-        document.getElementById('cur-num').innerText = idx + 1;
-        document.getElementById('progress-fill').style.width = ((idx / current.length) * 100) + "%";
+        const tableData = dataForPDF.map((item, index) => [index + 1, item.w, item.m]);
         
-        if(mode === 'test') {
-            isReviewing = false;
-            document.getElementById('test-w').innerText = current[idx].w;
-            document.getElementById('test-ans').innerText = current[idx].m;
-            document.getElementById('test-ans').style.opacity = '0';
-            document.getElementById('user-input').value = '';
-            document.getElementById('next-btn').innerText = '정답 확인';
-        } else {
-            isFlipped = false;
-            document.getElementById('main-card').classList.remove('is-flipped');
-            document.getElementById('front-w').innerText = current[idx].w;
-            document.getElementById('back-m').innerText = current[idx].m;
-            document.getElementById('next-btn').style.display = 'block';
-            document.getElementById('study-btns').style.display = 'none';
-        }
+        doc.autoTable({
+            head: [['No', 'Word', 'Meaning']],
+            body: tableData,
+            startY: 20,
+            styles: { font: 'helvetica', fontSize: 10 },
+            headStyles: { fillColor: [99, 102, 241] }
+        });
+        
+        doc.save(`Voca_Master_Part1_${part}.pdf`);
     }
 
-    function handleAction() {
-        if(mode === 'test') {
-            if(!isReviewing) {
-                document.getElementById('test-ans').style.opacity = '1';
-                document.getElementById('next-btn').innerText = '다음 단어';
-                isReviewing = true;
-            } else { next(); }
-        } else { flip(); }
-    }
-
-    function flip() {
-        isFlipped = !isFlipped;
-        document.getElementById('main-card').classList.toggle('is-flipped');
-        if(isFlipped) {
-            document.getElementById('next-btn').style.display = 'none';
-            document.getElementById('study-btns').style.display = 'grid';
-        }
-    }
-
-    function next() { idx++; update(); }
     function showScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id + '-screen').classList.add('active');
     }
 
-    document.getElementById('user-input').onkeypress = (e) => { if(e.key === 'Enter') handleAction(); };
-
-    async function generatePDF() {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        const shuffled = [...vocab].sort(() => Math.random() - 0.5);
-        let y = 20;
-        doc.setFontSize(16);
-        doc.text("EBS Week 3 Voca Test (126 Words)", 20, y);
-        y += 15; doc.setFontSize(10);
-        shuffled.forEach((v, i) => {
-            if (y > 280) { doc.addPage(); y = 20; }
-            doc.text(`${i + 1}. ${v.w} : ________________________________`, 20, y);
-            y += 8;
-        });
-        doc.save(`Voca_Test_Premium_Final.pdf`);
+    function startStrategy() {
+        maxStep = parseInt(document.getElementById('target-part').value);
+        currentMode = 'strategy'; currentStep = 1; loadStrategyData(); showScreen('action'); render();
     }
+
+    function loadStrategyData() {
+        let count = currentStep * 10;
+        if(count > vocab.length) count = vocab.length;
+        currentList = vocab.slice(0, count); currentIndex = 0;
+        document.getElementById('mode-label').innerText = `전략적 학습 (1~${currentStep})`;
+    }
+
+    function initMode(m) {
+        currentMode = m; currentIndex = 0;
+        currentList = (m === 'test') ? [...vocab].sort(() => Math.random() - 0.5) : [...vocab];
+        showScreen('action');
+        document.getElementById('mode-label').innerText = (m === 'test' ? '랜덤 테스트' : '전체 암기');
+        document.getElementById('card-area').style.display = (m === 'test' ? 'none' : 'block');
+        document.getElementById('test-area').style.display = (m === 'test' ? 'block' : 'none');
+        render();
+    }
+
+    function render() {
+        if(currentIndex >= currentList.length) {
+            if(currentMode === 'strategy' && currentStep < maxStep) {
+                alert(`Part ${currentStep} 완료! 다음 파트로 확장합니다.`);
+                currentStep++; loadStrategyData(); render();
+            } else { alert("학습 완료!"); location.reload(); }
+            return;
+        }
+        const data = currentList[currentIndex];
+        document.getElementById('cur-idx').innerText = currentIndex + 1;
+        document.getElementById('total-idx').innerText = currentList.length;
+        document.getElementById('progress-fill').style.width = ((currentIndex / currentList.length) * 100) + "%";
+        
+        if(currentMode === 'test') {
+            isRevealed = false;
+            document.getElementById('test-w').innerText = data.w;
+            document.getElementById('test-ans').innerText = data.m;
+            document.getElementById('test-ans').style.opacity = '0';
+            document.getElementById('user-input').value = '';
+        } else {
+            isFlipped = false;
+            document.getElementById('main-card').classList.remove('is-flipped');
+            document.getElementById('front-w').innerText = data.w;
+            document.getElementById('back-m').innerText = data.m;
+            document.getElementById('action-btn').style.display = 'block';
+            document.getElementById('study-controls').style.display = 'none';
+        }
+    }
+
+    function handleNext() {
+        if(currentMode === 'test') {
+            if(!isRevealed) {
+                document.getElementById('test-ans').style.opacity = '1';
+                isRevealed = true;
+            } else { nextWord(); }
+        } else { flipCard(); }
+    }
+
+    function flipCard() {
+        if(currentMode === 'test') return;
+        isFlipped = !isFlipped;
+        document.getElementById('main-card').classList.toggle('is-flipped');
+        if(isFlipped) {
+            document.getElementById('action-btn').style.display = 'none';
+            document.getElementById('study-controls').style.display = 'grid';
+        }
+    }
+
+    function nextWord() { currentIndex++; render(); }
 </script>
 </body>
 </html>
